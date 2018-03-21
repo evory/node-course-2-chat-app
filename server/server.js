@@ -34,10 +34,9 @@ socket.on('createMessage', (message, callback) => {
   //     createdAt: new Date().getTime()
   // })
 })
-
   socket.on('disconnect', () => {
-    console.log('User was disctonnect');
-
+    console.log('User disctonnect');
+    io.emit('newMessage', generateMessage('Admin', 'User has disconnected'))
   })
 })
 

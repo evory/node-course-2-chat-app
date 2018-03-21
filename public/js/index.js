@@ -6,8 +6,8 @@ socket.on('connect', function() {
   console.log('connected to server');
 });
 
-socket.on('disconnect', function() {
-  console.log('Disconnected from server');
+socket.on('disconnect', function(userDisconnected) {
+  console.log(userDisconnected);
 });
 
 socket.on('newMessage', function(newMessage) {
@@ -27,3 +27,16 @@ jQuery('#message-form').on('submit', function(e) {
     console.log(cb);
   })
 });
+
+var locationButton =jQuery('#send-location');
+locationButton.on('click', function() {
+  if(navigator.geolocation) {
+    return alert('Geolocation not supported by your browser')
+  }
+
+  navigator.geolocation.getCurrentPosition(function(position) {
+    console.log(position);
+  }, function() {
+    alert('Enable to fetch location.')
+  })
+})
