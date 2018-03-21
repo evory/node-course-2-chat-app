@@ -11,8 +11,23 @@ var io = socketIO(server);
 
 app.use(express.static(publicPath));
 
+/* io.on is a listenner on connection */
+
 io.on('connection', (socket) => {
   console.log('New user connected');
+
+  socket.emit('newMessage', {
+    from: "Bryan",
+    message: "coucou"
+  })
+
+
+/* socket.on is a listener */
+
+socket.on('createMessage', (message) => {
+  console.log('createMessage', message);
+})
+
   socket.on('disconnect', () => {
     console.log('User was disctonnect');
 
