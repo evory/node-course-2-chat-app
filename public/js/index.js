@@ -11,5 +11,9 @@ socket.on('disconnect', function() {
 });
 
 socket.on('newMessage', function(newMessage) {
-  console.log(newMessage);
+  console.log('newMessage', newMessage);
+})
+
+socket.on('asJoined', function(asJoined) {
+  console.log(asJoined);
 })
