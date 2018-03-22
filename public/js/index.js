@@ -18,26 +18,43 @@ socket.on('newMessage', function(newMessage) {
   jQuery('#messages-list').append(li);
 });
 
+socket.on('newLocationMessage', (message) => {
+  var li = jQuery('<li></li>');
+  var a = jQuery('<a target="_blank">My current location</a>');
+  li.text(`${message.from}: `);
+  a.attr('href', message.url);
+
+  li.append(a);
+  jQuery('#messages-list').append(li);
+});
+
 jQuery('#message-form').on('submit', function(e) {
   e.preventDefault();   // prevent default behaviour(like refreshing the page when clicking send button in htis example)
+
+    var messageTextbox = jQuery('[name=message]')
+
   socket.emit('createMessage', {
     from: "User",
-    text: jQuery('[name=message]').val()
-  }, function(cb) {   //aknowledger
-    console.log(cb);
+    text: messageTextbox.val()
+  }, function() {   // Callback who reset placeholder once the message is send
+    messageTextbox.val('')
   })
 });
 
 var locationButton = jQuery('#send-location');
 locationButton.on('click', function() {
   if(!navigator.geolocation) {
+    locationButton.removeAttr('disabled')
     return alert('Geolocation not supported by your browser')
   }
 
+  locationButton.attr('disabled', 'disabled').text('Sending location...'); // disable the button on click
+
   navigator.geolocation.getCurrentPosition(function(position) {
+    locationButton.removeAttr('disabled').text('Send location') // get the button able after the process
     socket.emit('createLocationMessage', {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
     })
   }, function() {
     alert('Enable to fetch location.')
