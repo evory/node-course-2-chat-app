@@ -17,12 +17,30 @@ function scrollToBottom() {
 }
 
 socket.on('connect', function() {
-  console.log('connected to server');
+  var params = jQuery.deparam(window.location.search) // transform in object
+  socket.emit('join', params, function(err) {
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('no error');
+
+    }
+  })
 });
 
 socket.on('disconnect', function(userDisconnected) {
   console.log(userDisconnected);
 });
+
+socket.on('updateUserList', function (users) {
+    var ul = jQuery('<ul></ul>')
+
+    users.forEach(function (user) {
+      ul.append(jQuery('<li></li>').text(user))
+    })
+    jQuery('#users').html(ul);
+})
 
 socket.on('newMessage', function(newMessage) {
   var formattedTime = moment(newMessage.createdAt).format('h:mm a')
@@ -66,7 +84,6 @@ jQuery('#message-form').on('submit', function(e) {
     var messageTextbox = jQuery('[name=message]')
 
   socket.emit('createMessage', {
-    from: "User",
     text: messageTextbox.val()
   }, function() {   // Callback who reset placeholder once the message is send
     messageTextbox.val('')
